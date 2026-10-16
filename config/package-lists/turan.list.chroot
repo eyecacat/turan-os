@@ -62,7 +62,7 @@ python3-venv
 # v1.0 sistem eklemeleri
 apparmor
 apparmor-utils
-apparmor-profiles
+# TURAN-OS-DOGRULA: apparmor-profiles
 earlyoom
 irqbalance
 systemd-coredump
@@ -73,22 +73,22 @@ command-not-found
 locales
 console-setup
 keyboard-configuration
-manpages-tr
+# TURAN-OS-DOGRULA: manpages-tr
 man-db
 fonts-liberation2
 fonts-croscore
 fonts-dejavu
 fonts-noto-color-emoji
 gtk2-engines-murrine
-gtk2-engines-pixbuf
+# TURAN-OS-DOGRULA: gtk2-engines-pixbuf
 gnome-keyring
 libpam-gnome-keyring
 gammastep
 inxi
 smartmontools
 lm-sensors
-psensor
-gsmartcontrol
+# TURAN-OS-DOGRULA: psensor
+# TURAN-OS-DOGRULA: gsmartcontrol
 x11-utils
 x11-xserver-utils
 policykit-1-gnome

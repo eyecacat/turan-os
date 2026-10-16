@@ -19,7 +19,7 @@ jobs:
       - name: Araçları kur
         run: |
           apt-get update
-          apt-get install -y live-build debootstrap squashfs-tools xorriso git ca-certificates librsvg2-bin
+          apt-get install -y python3 live-build debootstrap squashfs-tools xorriso git ca-certificates librsvg2-bin
 
       - uses: actions/checkout@v4
 
