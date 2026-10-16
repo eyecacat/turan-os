@@ -16,3 +16,21 @@ config/includes.chroot/etc/turan/bilge-ai.conf.local
 *.local
 secrets/
 *.bak
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

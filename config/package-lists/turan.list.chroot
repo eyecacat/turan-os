@@ -91,7 +91,8 @@ lm-sensors
 # TURAN-OS-DOGRULA: gsmartcontrol
 x11-utils
 x11-xserver-utils
-polkit-1-auth-agent
+# TURAN-OS-DOGRULA: polkit-1-auth-agent (Ubuntu paketi)
+lxpolkit
 
 # v1.0 sistem eklemeleri
 
