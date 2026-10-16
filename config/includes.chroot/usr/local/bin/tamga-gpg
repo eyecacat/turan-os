@@ -1,0 +1,46 @@
+#!/bin/bash
+# Tamga -> GPG anahtar gorseli ve imza
+set -u
+K='\033[1;33m'; S='\033[0m'
+
+ISIM="${1:-$USER}"
+EPOSTA="${2:-$USER@turan-os.local}"
+
+echo -e "${K}  TAMGA GPG${S} - $ISIM <$EPOSTA>"
+
+# 1) Tamga gorseli uret
+/usr/local/bin/tamga "$ISIM" 512 "#D4AF37" >/dev/null
+SVG="$HOME/tamga-$ISIM.svg"
+
+# 2) GPG anahtari var mi?
+if ! gpg --list-secret-keys "$EPOSTA" >/dev/null 2>&1; then
+  echo "  Yeni GPG anahtari uretiliyor (parola sifir)..."
+  cat > /tmp/gpg-batch <<EOT
+%no-protection
+Key-Type: RSA
+Key-Length: 4096
+Subkey-Type: RSA
+Subkey-Length: 4096
+Name-Real: $ISIM
+Name-Email: $EPOSTA
+Expire-Date: 2y
+%commit
+EOT
+  gpg --batch --generate-key /tmp/gpg-batch 2>/dev/null
+  rm -f /tmp/gpg-batch
+fi
+
+# 3) Gorsel kimligi GPG'ye ekle
+KEYID=$(gpg --list-secret-keys --with-colons "$EPOSTA" 2>/dev/null | awk -F: '/^sec/ {print $5; exit}')
+if [ -n "$KEYID" ]; then
+  gpg --list-keys --with-colons "$KEYID" >/dev/null 2>&1
+  # Not: GPG'ye gorsel eklemek icin photo uid gerekir; basit yolda sadece bilgi
+  echo "  Anahtar: $KEYID"
+  echo "  Tamga  : $SVG"
+  [ -f "${SVG%.svg}.png" ] && echo "  PNG    : ${SVG%.svg}.png"
+fi
+
+# 4) Git icin imza
+git config --global user.signingkey "$KEYID" 2>/dev/null || true
+git config --global commit.gpgsign true 2>/dev/null || true
+echo "  Git imzalama: acik"

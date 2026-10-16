@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+"""Sanyrak Shell - Dairesel Katmanli Uygulama Baslatici
+Ust Dunya: ag/bulut | Orta Dunya: uygulamalar | Alt Dunya: sistem
+"""
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, Pango
+import subprocess, os, math, sys
+
+GOK   = "#00A6FF"
+KUT   = "#D4AF37"
+OTUKEN= "#1B4D3E"
+KOMUR = "#11141A"
+KEMIK = "#F5F2EB"
+
+KATMANLAR = {
+    "ust": {
+        "baslik": "ÜST DÜNYA · Gök",
+        "renk": GOK,
+        "ogeler": [
+            ("Tarayıcı",   "firefox-esr",           "🌐"),
+            ("E-posta",    "thunderbird",           "✉"),
+            ("Sohbet",     "bilge-sohbet",          "💬"),
+            ("Dosya Paylaş","nautilus",             "☁"),
+            ("Ağ Araçları","nm-connection-editor",  "📡"),
+        ]
+    },
+    "orta": {
+        "baslik": "ORTA DÜNYA · Yurt",
+        "renk": KUT,
+        "ogeler": [
+            ("Dosyalar",   "thunar",                "📁"),
+            ("Terminal",   "xfce4-terminal",        "⌨"),
+            ("Metin",      "mousepad",              "📝"),
+            ("Ofis",       "libreoffice",           "📄"),
+            ("Medya",      "vlc",                   "🎬"),
+        ]
+    },
+    "alt": {
+        "baslik": "ALT DÜNYA · Kök",
+        "renk": OTUKEN,
+        "ogeler": [
+            ("Bilge AI",   "bilge-sohbet",          "🧠"),
+            ("Asena Ağ",   "xfce4-terminal -e asena","🐺"),
+            ("Umay RAM",   "xfce4-terminal -e umay","🌿"),
+            ("Kam Sağlık", "xfce4-terminal -e kam", "🔥"),
+            ("Ayarlar",    "xfce4-settings-manager","⚙"),
+        ]
+    }
+}
+
+class Sanyrak(Gtk.Window):
+    def __init__(self):
+        super().__init__(title="Şanyrak")
+        self.set_default_size(700, 700)
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_decorated(False)
+        self.set_keep_above(True)
+        self.set_app_paintable(True)
+        self.katman = "orta"
+        self.connect("key-press-event", self.tus)
+
+        self.da = Gtk.DrawingArea()
+        self.da.connect("draw", self.ciz)
+        self.add(self.da)
+
+        self.da.set_events(Gdk.EventMask.BUTTON_PRESS_MASK |
+                          Gdk.EventMask.POINTER_MOTION_MASK)
+        self.da.connect("button-press-event", self.tiklama)
+
+    def tus(self, w, e):
+        k = e.keyval
+        if k == Gdk.KEY_Escape: Gtk.main_quit()
+        elif k in (Gdk.KEY_Up, Gdk.KEY_w):
+            if self.katman == "alt": self.katman = "orta"
+            elif self.katman == "orta": self.katman = "ust"
+            self.da.queue_draw()
+        elif k in (Gdk.KEY_Down, Gdk.KEY_s):
+            if self.katman == "ust": self.katman = "orta"
+            elif self.katman == "orta": self.katman = "alt"
+            self.da.queue_draw()
+        return True
+
+    def ciz(self, w, cr):
+        gen = self.get_allocated_width()
+        yuk = self.get_allocated_height()
+        cx, cy = gen/2, yuk/2
+
+        # Arka plan
+        cr.set_source_rgba(0.067, 0.078, 0.102, 0.94)
+        cr.paint()
+
+        # Şanyrak çemberi (dış)
+        cr.set_source_rgb(0.1, 0.3, 0.24)
+        cr.set_line_width(3)
+        cr.arc(cx, cy, 280, 0, 2*math.pi)
+        cr.stroke()
+
+        # Orta çember
+        cr.set_source_rgb(0.33, 0.27, 0.14)
+        cr.set_line_width(2)
+        cr.arc(cx, cy, 180, 0, 2*math.pi)
+        cr.stroke()
+
+        # İç çember
+        cr.set_source_rgb(0.0, 0.65, 1.0)
+        cr.set_line_width(1.5)
+        cr.arc(cx, cy, 90, 0, 2*math.pi)
+        cr.stroke()
+
+        # Merkez: katman adı
+        akt = KATMANLAR[self.katman]
+        cr.set_source_rgb(0.96, 0.95, 0.92)
+        cr.select_font_face("Inter", 0, 1)
+        cr.set_font_size(18)
+        xt = cr.text_extents(akt["baslik"])
+        cr.move_to(cx - xt.width/2, cy + 6)
+        cr.show_text(akt["baslik"])
+
+        # Öğeler
+        ogeler = akt["ogeler"]
+        n = len(ogeler)
+        yari = 230
+        self.tiklama_noktalari = []
+        for i, (ad, komut, ikon) in enumerate(ogeler):
+            aci = -math.pi/2 + i * 2*math.pi/n
+            x = cx + yari * math.cos(aci)
+            y = cy + yari * math.sin(aci)
+            self.tiklama_noktalari.append((x, y, komut))
+
+            # Daire
+            r = KATMANLAR[self.katman]["renk"]
+            if r == GOK:   cr.set_source_rgb(0, 0.65, 1)
+            elif r == KUT: cr.set_source_rgb(0.83, 0.69, 0.22)
+            else:          cr.set_source_rgb(0.1, 0.3, 0.24)
+            cr.arc(x, y, 45, 0, 2*math.pi)
+            cr.fill()
+
+            # İkon
+            cr.set_source_rgb(0.96, 0.95, 0.92)
+            cr.select_font_face("Sans", 0, 1)
+            cr.set_font_size(28)
+            ixt = cr.text_extents(ikon)
+            cr.move_to(x - ixt.width/2, y + 10)
+            cr.show_text(ikon)
+
+            # Ad
+            cr.set_source_rgb(0.96, 0.95, 0.92)
+            cr.select_font_face("Inter", 0, 0)
+            cr.set_font_size(11)
+            axt = cr.text_extents(ad)
+            cr.move_to(x - axt.width/2, y + 62)
+            cr.show_text(ad)
+
+    def tiklama(self, w, e):
+        # Merkez tıklama = katman değiştir
+        cx, cy = self.get_allocated_width()/2, self.get_allocated_height()/2
+        mx, my = e.x, e.y
+
+        # Öğe tıklaması
+        if hasattr(self, 'tiklama_noktalari'):
+            for x, y, komut in self.tiklama_noktalari:
+                if (mx-x)**2 + (my-y)**2 < 45**2:
+                    subprocess.Popen(komut.split(), start_new_session=True)
+                    Gtk.main_quit()
+                    return True
+
+        # Merkez? Katman değiştir
+        if (mx-cx)**2 + (my-cy)**2 < 90**2:
+            dongu = ["ust","orta","alt"]
+            i = dongu.index(self.katman)
+            self.katman = dongu[(i+1) % 3]
+            self.da.queue_draw()
+        return True
+
+win = Sanyrak()
+win.connect("destroy", Gtk.main_quit)
+win.show_all()
+Gtk.main()

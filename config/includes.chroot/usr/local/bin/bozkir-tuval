@@ -1,0 +1,22 @@
+#!/bin/bash
+# Sonsuz Bozkir Tuvali - workspace switcher
+# Kullanim: bozkir-tuval [sol|sag|1|2|3|4]
+set -u
+K='\033[1;36m'; S='\033[0m'
+
+case "${1:-liste}" in
+  sol)  wmctrl -d 2>/dev/null | grep -q . && xdotool key ctrl+alt+Left ;;
+  sag)  xdotool key ctrl+alt+Right ;;
+  [1-4]) xdotool set_desktop $(( $1 - 1 )) ;;
+  liste|*)
+    echo -e "${K}  BOZKIR TUVALI${S} - Sanal masaustu"
+    echo "============================================"
+    if command -v wmctrl >/dev/null 2>&1; then
+      wmctrl -d | awk '{printf "  [%s] %s %s\n", $1, ($2=="*"?"●":"○"), $NF}'
+    else
+      xdotool get_num_desktops 2>/dev/null
+    fi
+    echo
+    echo "Kullanim: bozkir-tuval [sol|sag|1|2|3|4]"
+    ;;
+esac

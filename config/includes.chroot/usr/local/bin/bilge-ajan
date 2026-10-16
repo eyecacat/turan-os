@@ -1,0 +1,42 @@
+#!/bin/bash
+# Bilge Ajan: dogal dille sistem gorevi
+# Kullanim: bilge-ajan "bana en cok yer kaplayan 5 klasoru goster"
+set -u
+K='\033[1;36m'; Y='\033[1;33m'; S='\033[0m'
+
+[ -f /etc/turan/bilge-ai.conf ] && . /etc/turan/bilge-ai.conf
+API_KEY="${BILGE_API_KEY:-}"
+MODEL="${BILGE_MODEL:-nvidia/nemotron-3.5-super-vl:free}"
+URL="${BILGE_URL:-https://openrouter.ai/api/v1/chat/completions}"
+
+gorev="$*"
+[ -z "$gorev" ] && { echo "Kullanim: bilge-ajan \"<gorev>\""; exit 1; }
+
+echo -e "${K}  BILGE AJAN${S} - gorev: $gorev"
+echo
+
+SISTEM="Sen bir Linux sistem ajanisin. Kullanicinin istegini tek bir bash komutuna cevir. SADECE komutu yaz, aciklama ekleme. Komut guvenli olmali; rm -rf / gibi yikici seyler yazma. Eger sistem bilgisi gerekiyorsa uygun komutu uret. Turkce anlamayi destekle."
+
+istek=$(jq -n --arg m "$MODEL" --arg s "$SISTEM" --arg u "$gorev" '{
+  model: $m,
+  messages: [{role:"system",content:$s},{role:"user",content:$u}],
+  max_tokens: 200,
+  temperature: 0.3
+}')
+
+komut=$(curl -s --max-time 30 -X POST "$URL" \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "HTTP-Referer: https://github.com/eyecacat/turan-os" \
+  -d "$istek" 2>/dev/null | jq -r '.choices[0].message.content // empty' | sed 's/^```[a-z]*//; s/```$//' | tr -d '`' | head -1)
+
+[ -z "$komut" ] && { echo "Komut uretilemedi."; exit 1; }
+
+echo -e "${Y}Onerilen komut:${S}"
+echo "  $komut"
+echo
+read -p "Calistirilsin mi? [e/H] " c
+case "$c" in
+  e|E|evet|Evet|YES|yes) eval "$komut" ;;
+  *) echo "Iptal." ;;
+esac

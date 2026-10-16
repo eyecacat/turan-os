@@ -38,3 +38,18 @@ Bu depodaki yapılandırma dosyaları için lisans dosyası (LICENSE) eklenmelid
 - `bilge` yapay zeka iskeleti: `bilge ozet`, `bilge morf`, `bilge runik`
 - `tamga` kişisel mühür üretici
 - Panel: Asena/Umay/Kam genmon widget'ları
+
+## Bilge Katmanı (v0.4)
+- **Bilge AI**: OpenRouter üzerinden gerçek Türkçe yapay zeka
+  - `bilge sor "<soru>"` — soru-cevap
+  - `bilge sohbet` — interaktif sohbet
+  - `bilge-ajan "<görev>"` — doğal dille sistem otomasyonu
+- **Şanyrak Launcher**: Dairesel katmanlı uygulama menüsü (Super+Space)
+- **Tamga GPG**: Kişisel mühür → kriptografik imza
+- **Bozkır Tuvali**: Sanal masaüstleri arası yumuşak geçiş
+- **Türkçe morfoloji**: `bilge morf` kök/ek analizi
+- **Göktürk runik**: `bilge runik` dönüştürücü
+
+### API Anahtarı Hakkında
+`/etc/turan/bilge-ai.conf` dosyasında OpenRouter API anahtarı vardır (mod 600).
+Yeniden dağıtım öncesi anahtarı değiştirin.

@@ -1,0 +1,19 @@
+#!/bin/bash
+# Asena detay - runik akis semasi
+K='\033[1;36m'; S='\033[0m'
+echo -e "${K}  ASENA${S}  Runik Akis Semasi"
+echo "============================================================"
+printf "%-22s %-8s %-6s %s\n" "PROSES" "PORT" "DURUM" "GOKTURK"
+echo "------------------------------------------------------------"
+ss -tunp 2>/dev/null | tail -n +2 | while read -r a b c d e prog; do
+  pname=$(echo "$prog" | grep -oP 'users:\(\("\K[^"]+' | head -1)
+  [ -z "$pname" ] && pname="?"
+  ad=$(echo "$pname" | head -c 20)
+  port=$(echo "$e" | awk -F: '{print $NF}' | head -c 6)
+  durum="𐰀"
+  case "$a" in
+    tcp) durum="𐱅𐰲𐰯" ;;
+    udp) durum="𐰆𐰑𐰯" ;;
+  esac
+  printf "%-22s %-8s %-6s %s\n" "$ad" "$port" "$durum" "𐰚𐰆𐰞𐰞𐰀𐰣𐰃𐰞𐰖𐰆𐰺"
+done | head -30

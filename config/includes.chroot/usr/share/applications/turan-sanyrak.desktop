@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Şanyrak
+Comment=Dairesel uygulama başlatıcı
+Exec=sanyrak
+Icon=turan-os
+Terminal=false
+Categories=Utility;System;
+Keywords=launcher;sanyrak;menu;

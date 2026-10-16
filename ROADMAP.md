@@ -62,3 +62,27 @@
 - [ ] Tamga tabanlı GPG imza entegrasyonu
 - [ ] Kendi APT deposu
 - [ ] (Uzun vade) Rust mikroçekirdek araştırması - Redox OS fork
+
+## v0.4 - Bilge Katmani (tamamlandi)
+- [x] Bilge AI (OpenRouter, ücretsiz modeller)
+- [x] Bilge Sohbet (interaktif)
+- [x] Bilge Ajan (doğal dil → komut)
+- [x] Şanyrak Launcher (GTK dairesel)
+- [x] Tamga GPG entegrasyonu
+- [x] Bozkır Tuvali (workspace geçişleri)
+- [x] Türkçe morfoloji (basit FST)
+- [x] Göktürk runik dönüştürücü
+- [x] Panel widget'ları (Asena/Umay/Kam/Bilge)
+
+## v0.5 - Sıradaki
+- [ ] Şanyrak Shell v0.2 (daha akıcı animasyonlar)
+- [ ] Sonsuz Bozkır tuvali (procedural duvar kağıdı)
+- [ ] Zemberek tam entegrasyon
+- [ ] Yerel SLM (llama.cpp + Phi-3-mini) — çevrimdışı mod
+- [ ] ASR/TTS (sesli asistan)
+
+## v1.0 ve sonrası
+- [ ] GPG imzalı git commit'ler otomatik
+- [ ] Kendi APT deposu (turan-apt)
+- [ ] Orkhon Sans yazı tipi
+- [ ] (Uzun vade) Redox OS fork araştırması

@@ -1,0 +1,65 @@
+#!/bin/bash
+# Interaktif AI sohbet
+set -u
+K='\033[1;36m'; Y='\033[1;33m'; S='\033[0m'; KIR='\033[1;31m'
+
+[ -f /etc/turan/bilge-ai.conf ] && . /etc/turan/bilge-ai.conf
+[ -f "$HOME/.config/turan/bilge.conf" ] && . "$HOME/.config/turan/bilge.conf"
+
+API_KEY="${BILGE_API_KEY:-}"
+MODEL="${BILGE_MODEL:-nvidia/nemotron-3.5-super-vl:free}"
+URL="${BILGE_URL:-https://openrouter.ai/api/v1/chat/completions}"
+MAX="${BILGE_MAX_TOKENS:-800}"
+
+clear
+echo -e "${K}╔══════════════════════════════════════════════════╗${S}"
+echo -e "${K}║         B I L G E   S O H B E T                  ║${S}"
+echo -e "${K}║   Cikmak icin: /cik   Temizlemek icin: /temizle ║${S}"
+echo -e "${K}╚══════════════════════════════════════════════════╝${S}"
+echo -e "${K}Model:${S} $MODEL"
+echo
+
+gecmis='[{"role":"system","content":"Sen Bilge, TURAN-OS isletim sisteminin Turkce yapay zeka yardimcisisin. Kisa, oz ve Turkce cevap ver."}]'
+
+while true; do
+  printf "${Y}sen${S}> "
+  IFS= read -r satir || break
+  [ -z "$satir" ] && continue
+  case "$satir" in
+    /cik|/exit|/quit) echo "Saglikla kal."; break ;;
+    /temizle|/clear) clear; continue ;;
+    /model) echo "Aktif: $MODEL"; continue ;;
+  esac
+
+  # Gecmise ekle
+  gecmis=$(echo "$gecmis" | jq --arg u "$satir" '. + [{role:"user",content:$u}]')
+
+  # Istek
+  istek=$(jq -n --arg m "$MODEL" --argjson msgs "$gecmis" --argjson max "$MAX" '{model:$m, messages:$msgs, max_tokens:$max, temperature:0.7}')
+
+  printf "${K}bilge${S}> dusunuyor...\r"
+  yanit=$(curl -s --max-time 60 -X POST "$URL" \
+    -H "Authorization: Bearer $API_KEY" \
+    -H "Content-Type: application/json" \
+    -H "HTTP-Referer: https://github.com/eyecacat/turan-os" \
+    -H "X-Title: TURAN-OS Bilge" \
+    -d "$istek" 2>/dev/null)
+
+  icerik=$(echo "$yanit" | jq -r '.choices[0].message.content // empty' 2>/dev/null)
+  hata=$(echo "$yanit" | jq -r '.error.message // empty' 2>/dev/null)
+
+  if [ -n "$hata" ]; then
+    printf "\r${KIR}Hata: %s${S}\n" "$hata"
+    continue
+  fi
+  if [ -z "$icerik" ]; then
+    printf "\r${KIR}Bos cevap${S}\n"
+    continue
+  fi
+
+  printf "\r                    \r"
+  echo -e "${K}bilge${S}> $icerik"
+  echo
+
+  gecmis=$(echo "$gecmis" | jq --arg a "$icerik" '. + [{role:"assistant",content:$a}]')
+done

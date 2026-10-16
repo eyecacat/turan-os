@@ -31,9 +31,17 @@ jobs:
           bash -n config/includes.chroot/usr/local/bin/turan-bakim
           bash -n config/includes.chroot/usr/local/bin/turan-karsilama
           bash -n config/includes.chroot/usr/local/bin/turan-ek
+          python3 -m py_compile config/includes.chroot/usr/local/bin/sanyrak
+          bash -n config/includes.chroot/usr/local/bin/bilge
+          bash -n config/includes.chroot/usr/local/bin/bilge-sohbet
+          bash -n config/includes.chroot/usr/local/bin/bilge-ajan
+          bash -n config/includes.chroot/usr/local/bin/tamga-gpg
+          bash -n config/includes.chroot/usr/local/bin/bozkir-tuval
           for f in auto/config config/hooks/live/*.hook.chroot; do sh -n "$f"; done
 
       - name: ISO derle
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           chmod +x auto/config
           lb config

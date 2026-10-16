@@ -1,0 +1,12 @@
+#!/bin/bash
+# Panel: Bilge AI durumu
+[ -f /etc/turan/bilge-ai.conf ] && . /etc/turan/bilge-ai.conf
+K="${BILGE_API_KEY:-}"
+if [ -z "$K" ]; then
+  echo "<txt> 𐰋𐰃𐰠𐰏𐰅 ⨯ </txt>"
+  echo "<tool>Bilge: API yok</tool>"
+else
+  echo "<txt> 𐰋𐰃𐰠𐰏𐰅 ✓ </txt>"
+  echo "<tool>Bilge AI hazir - tikla: bilge sohbet</tool>"
+  echo "<click>xfce4-terminal -e bilge-sohbet --title=Bilge</click>"
+fi

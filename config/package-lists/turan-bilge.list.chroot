@@ -1,0 +1,14 @@
+# Bilge Katmani v0.4
+jq
+curl
+python3-gi
+gir1.2-gtk-3.0
+python3-cairo
+xdotool
+wmctrl
+gnupg
+gnupg-agent
+pinentry-gtk2
+libnotify-bin
+espeak-ng
+python3-pip

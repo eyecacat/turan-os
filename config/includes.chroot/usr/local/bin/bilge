@@ -1,53 +1,68 @@
 #!/bin/bash
-# Bilge - Bilge Kagan & Tonyukuk, Yerel Sistem Yapay Zekasi
-# Bu betik, v0.4'te llama.cpp/ollama ile konusacak. Su an iskelet.
-K='\033[1;36m'; S='\033[0m'; Y='\033[1;33m'
+# Bilge - TURAN-OS AI Yardimcisi (OpenRouter)
+set -u
+K='\033[1;36m'; Y='\033[1;33m'; S='\033[0m'; KIR='\033[1;31m'
 
-yardim() {
-  cat <<'EOT'
-BILGE - Yerel Yapay Zeka Yardimcisi
+[ -f /etc/turan/bilge-ai.conf ] && . /etc/turan/bilge-ai.conf
+[ -f "$HOME/.config/turan/bilge.conf" ] && . "$HOME/.config/turan/bilge.conf"
 
-Kullanim:
-  bilge sor "<soru>"         Soru sor (yerel SLM)
-  bilge ozet                 Sistem durumunu ozetler
-  bilge morf "<cumle>"       Turkce morfolojik analiz (Zemberek)
-  bilge runik "<metin>"      Metni Gokturk Runik'e cevirir
-  bilge yardim               Bu ekran
+API_KEY="${BILGE_API_KEY:-}"
+MODEL="${BILGE_MODEL:-nvidia/nemotron-3.5-super-vl:free}"
+FALLBACK="${BILGE_FALLBACK:-cohere/north-mini-code:free}"
+URL="${BILGE_URL:-https://openrouter.ai/api/v1/chat/completions}"
+MAX="${BILGE_MAX_TOKENS:-800}"
+TMO="${BILGE_ZAMAN_ASIMI:-45}"
 
-Not: Yerel SLM v0.4'te devreye girecek. Su an ozet/morf/runik calisiyor.
-EOT
+SISTEM="Sen Bilge, TURAN-OS'un Turkce yapay zeka yardimcisisin. Kisa, oz, net ve Turkce cevap ver. Teknik konularda dogru ol. Emin degilsen 'bilmiyorum' de."
+
+_api() {
+  local model="$1" mesaj="$2"
+  local json
+  json=$(jq -n --arg m "$model" --arg s "$SISTEM" --arg u "$mesaj" --argjson max "$MAX" '{
+    model: $m,
+    messages: [{role:"system",content:$s},{role:"user",content:$u}],
+    max_tokens: $max,
+    temperature: 0.7
+  }' 2>/dev/null) || return 1
+
+  curl -s --max-time "$TMO" -X POST "$URL" \
+    -H "Authorization: Bearer $API_KEY" \
+    -H "Content-Type: application/json" \
+    -H "HTTP-Referer: https://github.com/eyecacat/turan-os" \
+    -H "X-Title: TURAN-OS Bilge" \
+    -d "$json"
 }
 
-morf() {
-  # Basit koke+eke ayirma simulasyonu (v0.4'te Zemberek'e baglanacak)
-  echo "Sozcuk                Kok          Ek"
-  echo "-------------------------------------"
-  for w in "$@"; do
-    case "$w" in
-      *lar|*ler)   K="${w%???}"; E="${w#$K}" ;;
-      *lik|*lik|*luk|*lük) K="${w%???}"; E="${w#$K}" ;;
-      *ci|*ci|*cu|*cü)     K="${w%??}";  E="${w#$K}" ;;
-      *de|*da|*te|*ta)     K="${w%??}";  E="${w#$K}" ;;
-      *) K="$w"; E="-" ;;
-    esac
-    printf "%-20s  %-12s %s\n" "$w" "$K" "$E"
-  done
-}
+sor() {
+  [ -z "$API_KEY" ] && { echo -e "${KIR}API anahtari yok.${S} /etc/turan/bilge-ai.conf"; return 1; }
+  local soru="$*"
+  [ -z "$soru" ] && { echo "Kullanim: bilge sor \"<soru>\""; return 1; }
 
-runik() {
-  # UTF-8 -> Gokturk Runik (basit harf eslemesi, tam fonetik degil)
-  python3 - "$@" <<'PY'
-import sys
-m = {
-  'a':'𐰀','b':'𐰋','c':'𐰲','d':'𐰑','e':'𐰅','f':'𐰉','g':'𐰍','ğ':'𐰍',
-  'h':'𐰍','ı':'𐰃','i':'𐰄','j':'𐰲','k':'𐰚','l':'𐰞','m':'𐰢','n':'𐰣',
-  'o':'𐰆','ö':'𐰈','p':'𐰯','r':'𐰻','s':'𐰽','ş':'𐱁','t':'𐱅','u':'𐰆',
-  'ü':'𐰈','v':'𐰉','y':'𐰘','z':'𐰔',' ':' '
-}
-metin = " ".join(sys.argv[1:]).lower()
-print("Orjinal : " + metin)
-print("Runik   : " + "".join(m.get(c, c) for c in metin))
-PY
+  echo -e "${K}  BILGE${S} soruyor: $soru"
+  echo -e "${K}  Model${S} : $MODEL"
+
+  local yanit hata
+  yanit=$(_api "$MODEL" "$soru") || true
+
+  if [ -z "$yanit" ]; then
+    echo -e "${Y}[!]${S} Ana model yanit vermedi, yedek deneniyor: $FALLBACK"
+    yanit=$(_api "$FALLBACK" "$soru") || true
+  fi
+
+  [ -z "$yanit" ] && { echo -e "${KIR}[X]${S} Baglanti veya API hatasi."; return 1; }
+
+  hata=$(echo "$yanit" | jq -r '.error.message // empty' 2>/dev/null)
+  if [ -n "$hata" ]; then
+    echo -e "${KIR}[X]${S} API: $hata"
+    return 1
+  fi
+
+  echo
+  echo "$yanit" | jq -r '.choices[0].message.content // "(bos cevap)"'
+  echo
+  local kullanilan
+  kullanilan=$(echo "$yanit" | jq -r '.model // "?"')
+  echo -e "${K}  Model${S} : $kullanilan"
 }
 
 ozet() {
@@ -58,25 +73,82 @@ ozet() {
   echo "Makine   : $(uname -m)"
   echo "Uptime   : $(uptime -p)"
   echo
-  echo "Bellek:"
-  free -h | head -2
+  echo "Bellek:"; free -h | head -2
   echo
-  echo "Disk (kok):"
-  df -h / | tail -1
+  echo "Disk (kok):"; df -h / | tail -1
   echo
-  echo "Yuklu paket sayisi: $(dpkg -l 2>/dev/null | grep -c '^ii')"
-  echo "Aktif servis      : $(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l)"
+  echo "Paket: $(dpkg -l 2>/dev/null | grep -c '^ii')  Servis: $(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l)"
+}
+
+morfoloji() {
+  # Basit Turkce kok/ek ayirici (Zemberek yok, naif ama ise yarar)
+  echo "Sozcuk                Kok          Ek Zinciri"
+  echo "----------------------------------------------"
+  local ekler="lar ler lik lık luk lük ci cı cu cü li lı lu lü siz sız suz süz de da te ta den dan ten tan im ım in ın iz ız i ı u ü e a si sı su sü si miz mız muz müz iniz ınız unuz ünüz dir dir dır dür dur"
+  for w in "$@"; do
+    local kok="$w" ek=""
+    for e in $ekler; do
+      case "$w" in
+        *"$e")
+          local uzun=${#e}
+          local wl=${#w}
+          if [ "$wl" -gt "$((uzun+1))" ]; then
+            kok="${w:0:$((wl-uzun))}"; ek="$e"; break
+          fi ;;
+      esac
+    done
+    printf "%-20s  %-12s %s\n" "$w" "$kok" "${ek:--}"
+  done
+}
+
+runik() {
+  python3 - "$@" <<'PY'
+import sys
+# Gokturk Runik - fonetik yaklasim
+m = {
+'a':'𐰀','b':'𐰋','c':'𐰲','ç':'𐰲','d':'𐰑','e':'𐰅','f':'𐰉','g':'𐰍','ğ':'𐰍',
+'h':'𐰍','ı':'𐰃','i':'𐰄','j':'𐰖','k':'𐰚','l':'𐰞','m':'𐰢','n':'𐰣','ñ':'𐰬',
+'o':'𐰆','ö':'𐰈','p':'𐰯','q':'𐰶','r':'𐰺','s':'𐰽','ş':'𐱁','t':'𐱅','u':'𐰆',
+'ü':'𐰈','v':'𐰉','w':'𐰔','x':'𐰚𐰽','y':'𐰘','z':'𐰔',
+'A':'𐰀','B':'𐰋','C':'𐰲','Ç':'𐰲','D':'𐰑','E':'𐰅','F':'𐰉','G':'𐰍','Ğ':'𐰍',
+'H':'𐰍','I':'𐰃','İ':'𐰄','J':'𐰖','K':'𐰚','L':'𐰞','M':'𐰢','N':'𐰣',
+'O':'𐰆','Ö':'𐰈','P':'𐰯','R':'𐰺','S':'𐰽','Ş':'𐱁','T':'𐱅','U':'𐰆','Ü':'𐰈',
+'V':'𐰉','Y':'𐰘','Z':'𐰔',' ':'␣','.':'Ⱉ',',':'Ⱂ','!':'𐰾','?':'Ⱃ'
+}
+metin = " ".join(sys.argv[1:])
+print("Orjinal : " + metin)
+print("Runik   : " + "".join(m.get(c, c) for c in metin))
+PY
+}
+
+yardim() {
+  cat <<EOT
+${K}BILGE${S} - TURAN-OS Yerel AI Yardimcisi
+
+Kullanim:
+  bilge sor "<soru>"           Yapay zekaya soru sor
+  bilge sohbet                 Interaktif sohbet baslat
+  bilge ozet                   Sistem ozeti
+  bilge morf "<cumle>"         Turkce kok/ek analizi
+  bilge runik "<metin>"        Gokturk Runik cevirisi
+  bilge model                  Aktif model bilgisi
+  bilge yardim                 Bu ekran
+
+Ornekler:
+  bilge sor "Turan-OS nedir?"
+  bilge morf "kitaplarimizdakilerden"
+  bilge runik "Turan"
+EOT
 }
 
 komut="${1:-yardim}"; shift 2>/dev/null || true
 case "$komut" in
-  sor)
-    echo -e "${Y}[!]${S} Yerel SLM henuz devrede degil (v0.4)."
-    echo "    Sorunuz kaydedildi: $*"
-    echo "    Simdilik 'bilge ozet' ve 'bilge morf <cumle>' calisiyor." ;;
+  sor) sor "$@" ;;
+  sohbet) exec /usr/local/bin/bilge-sohbet ;;
   ozet) ozet ;;
-  morf) morf "$@" ;;
+  morf) morfoloji "$@" ;;
   runik) runik "$@" ;;
+  model) echo "Model   : $MODEL"; echo "Yedek   : $FALLBACK"; echo "API Key : ${API_KEY:0:20}..." ;;
   yardim|-h|--help|"") yardim ;;
-  *) echo "Bilinmeyen komut: $komut"; yardim; exit 1 ;;
+  *) echo "Bilinmeyen: $komut"; yardim; exit 1 ;;
 esac

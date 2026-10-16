@@ -6,3 +6,13 @@ binary/
 *.part*
 live-image-*
 turan-v1-tamamla.sh
+turan-bilge.sh
+
+# Yerel ayarlar - asla commitlenmesin
+.env
+.env.*
+!.env.example
+config/includes.chroot/etc/turan/bilge-ai.conf.local
+*.local
+secrets/
+*.bak
