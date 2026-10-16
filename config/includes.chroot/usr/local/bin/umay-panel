@@ -1,0 +1,9 @@
+#!/bin/bash
+# Panel: yesil kubbe ne kadar doluysa o kadar RAM kullanimi
+USED=$(free | awk '/^Mem:/ {printf "%d", $3/$2*100}')
+BAR=""
+for i in $(seq 1 10); do
+  if [ $i -le $((USED/10)) ]; then BAR="${BAR}●"; else BAR="${BAR}○"; fi
+done
+echo "<txt> 𐰆 $BAR ${USED}% </txt>"
+echo "<tool>RAM: ${USED}%</tool>"

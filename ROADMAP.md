@@ -38,3 +38,27 @@
 - [ ] Ozel Plymouth animasyonu
 - [ ] Ozel GRUB gorsel temasi
 - [ ] LICENSE dosyasi
+
+## Bozkır Katmanı (v0.3) - tamamlandi
+- [x] Gök/Kut/Ötüken renk paleti
+- [x] Bozkır duvar kağıdı ve yeni logo
+- [x] Mitolojik komutlar: asena, umay, tore, kam
+- [x] bilge AI iskeleti (ozet, morf, runik)
+- [x] tamga üretici
+- [x] Panel widget'ları
+
+## v0.4 - Yerel AI ve Türkçe morfoloji
+- [ ] llama.cpp + Phi-3-mini veya Qwen2-1.5B INT4
+- [ ] Zemberek servisi (Türkçe morfolojik analiz)
+- [ ] bilge sor: gerçek yerel SLM cevabı
+- [ ] Runik dönüşümü: hover ile canlı
+
+## v0.5 - Şanyrak Shell
+- [ ] Dairesel launcher (Python + Qt veya GTK)
+- [ ] Katmanlı masaüstü (Üst/Orta/Alt Dünya)
+- [ ] Sonsuz Bozkır tuvali
+
+## v1.0 ve sonrası
+- [ ] Tamga tabanlı GPG imza entegrasyonu
+- [ ] Kendi APT deposu
+- [ ] (Uzun vade) Rust mikroçekirdek araştırması - Redox OS fork

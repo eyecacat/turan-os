@@ -1,5 +1,38 @@
-@define-color turan_red #e30a17;
-@define-color turan_dark #0a0f1c;
-headerbar, .titlebar { background: linear-gradient(180deg, #141f36, #0a0f1c); color: #fff; }
-button.suggested-action { background: @turan_red; color: #fff; }
-progressbar progress { background: @turan_red; }
+/* TURAN-OS Bozkır Minimalizmi - Renk Paleti */
+@define-color gok_mavisi      #00A6FF;
+@define-color kut_altini      #D4AF37;
+@define-color otuken_yesili   #1B4D3E;
+@define-color yurt_komuru     #11141A;
+@define-color saman_kemigi    #F5F2EB;
+
+@define-color theme_bg_color       @yurt_komuru;
+@define-color theme_fg_color       @saman_kemigi;
+@define-color theme_selected_bg_color @gok_mavisi;
+@define-color theme_selected_fg_color @yurt_komuru;
+
+headerbar, .titlebar {
+  background: linear-gradient(180deg, #1a1f2b, @yurt_komuru);
+  color: @saman_kemigi;
+  border-bottom: 1px solid @otuken_yesili;
+}
+button.suggested-action {
+  background: @gok_mavisi;
+  color: @yurt_komuru;
+  font-weight: 600;
+}
+button.destructive-action {
+  background: @kut_altini;
+  color: @yurt_komuru;
+}
+progressbar progress {
+  background: linear-gradient(90deg, @otuken_yesili, @gok_mavisi);
+}
+entry:focus, .view:selected {
+  border-color: @gok_mavisi;
+  box-shadow: 0 0 0 2px alpha(@gok_mavisi, 0.35);
+}
+tooltip {
+  background: @yurt_komuru;
+  color: @saman_kemigi;
+  border: 1px solid @kut_altini;
+}

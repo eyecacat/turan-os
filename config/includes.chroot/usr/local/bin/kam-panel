@@ -1,0 +1,10 @@
+#!/bin/bash
+# Panel: en yuksek sicaklik
+if command -v sensors >/dev/null 2>&1; then
+  T=$(sensors 2>/dev/null | grep -oE '[0-9]+\.[0-9]+°C' | sort -rn | head -1)
+  [ -z "$T" ] && T="--"
+  echo "<txt> 𐰚 $T </txt>"
+  echo "<tool>En yuksek sicaklik: $T</tool>"
+else
+  echo "<txt> 𐰚 -- </txt>"
+fi

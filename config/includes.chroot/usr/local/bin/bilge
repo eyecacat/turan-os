@@ -1,0 +1,82 @@
+#!/bin/bash
+# Bilge - Bilge Kagan & Tonyukuk, Yerel Sistem Yapay Zekasi
+# Bu betik, v0.4'te llama.cpp/ollama ile konusacak. Su an iskelet.
+K='\033[1;36m'; S='\033[0m'; Y='\033[1;33m'
+
+yardim() {
+  cat <<'EOT'
+BILGE - Yerel Yapay Zeka Yardimcisi
+
+Kullanim:
+  bilge sor "<soru>"         Soru sor (yerel SLM)
+  bilge ozet                 Sistem durumunu ozetler
+  bilge morf "<cumle>"       Turkce morfolojik analiz (Zemberek)
+  bilge runik "<metin>"      Metni Gokturk Runik'e cevirir
+  bilge yardim               Bu ekran
+
+Not: Yerel SLM v0.4'te devreye girecek. Su an ozet/morf/runik calisiyor.
+EOT
+}
+
+morf() {
+  # Basit koke+eke ayirma simulasyonu (v0.4'te Zemberek'e baglanacak)
+  echo "Sozcuk                Kok          Ek"
+  echo "-------------------------------------"
+  for w in "$@"; do
+    case "$w" in
+      *lar|*ler)   K="${w%???}"; E="${w#$K}" ;;
+      *lik|*lik|*luk|*lük) K="${w%???}"; E="${w#$K}" ;;
+      *ci|*ci|*cu|*cü)     K="${w%??}";  E="${w#$K}" ;;
+      *de|*da|*te|*ta)     K="${w%??}";  E="${w#$K}" ;;
+      *) K="$w"; E="-" ;;
+    esac
+    printf "%-20s  %-12s %s\n" "$w" "$K" "$E"
+  done
+}
+
+runik() {
+  # UTF-8 -> Gokturk Runik (basit harf eslemesi, tam fonetik degil)
+  python3 - "$@" <<'PY'
+import sys
+m = {
+  'a':'𐰀','b':'𐰋','c':'𐰲','d':'𐰑','e':'𐰅','f':'𐰉','g':'𐰍','ğ':'𐰍',
+  'h':'𐰍','ı':'𐰃','i':'𐰄','j':'𐰲','k':'𐰚','l':'𐰞','m':'𐰢','n':'𐰣',
+  'o':'𐰆','ö':'𐰈','p':'𐰯','r':'𐰻','s':'𐰽','ş':'𐱁','t':'𐱅','u':'𐰆',
+  'ü':'𐰈','v':'𐰉','y':'𐰘','z':'𐰔',' ':' '
+}
+metin = " ".join(sys.argv[1:]).lower()
+print("Orjinal : " + metin)
+print("Runik   : " + "".join(m.get(c, c) for c in metin))
+PY
+}
+
+ozet() {
+  echo -e "${K}  BILGE${S} Sistem Ozeti"
+  echo "================================"
+  echo "Surum    : $(cat /etc/turan-surum 2>/dev/null || echo ?)"
+  echo "Cekirdek : $(uname -r)"
+  echo "Makine   : $(uname -m)"
+  echo "Uptime   : $(uptime -p)"
+  echo
+  echo "Bellek:"
+  free -h | head -2
+  echo
+  echo "Disk (kok):"
+  df -h / | tail -1
+  echo
+  echo "Yuklu paket sayisi: $(dpkg -l 2>/dev/null | grep -c '^ii')"
+  echo "Aktif servis      : $(systemctl list-units --type=service --state=running --no-legend 2>/dev/null | wc -l)"
+}
+
+komut="${1:-yardim}"; shift 2>/dev/null || true
+case "$komut" in
+  sor)
+    echo -e "${Y}[!]${S} Yerel SLM henuz devrede degil (v0.4)."
+    echo "    Sorunuz kaydedildi: $*"
+    echo "    Simdilik 'bilge ozet' ve 'bilge morf <cumle>' calisiyor." ;;
+  ozet) ozet ;;
+  morf) morf "$@" ;;
+  runik) runik "$@" ;;
+  yardim|-h|--help|"") yardim ;;
+  *) echo "Bilinmeyen komut: $komut"; yardim; exit 1 ;;
+esac

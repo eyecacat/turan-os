@@ -1,0 +1,13 @@
+#!/bin/bash
+# Asena - Gok-Kurt Ag Avcisi
+K='\033[1;36m'; S='\033[0m'
+echo -e "${K}  ASENA${S}  Gok-Kurt Ag Avcisi"
+echo "============================================"
+echo "Aktif baglantilar:"
+ss -tunp 2>/dev/null | head -25
+echo
+echo "Disari giden soketler:"
+ss -tun state established 2>/dev/null | awk 'NR>1 {print $5}' | sort | uniq -c | sort -rn | head
+echo
+echo "Dinlenen portlar:"
+ss -tlnp 2>/dev/null | head -15

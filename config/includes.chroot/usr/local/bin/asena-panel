@@ -1,0 +1,5 @@
+#!/bin/bash
+# Panel widget: yukarı ok sayısı + aktif soket sayisi
+OUT=$(ss -tun state established 2>/dev/null | tail -n +2 | wc -l)
+echo "<txt> 𐰀 $OUT </txt>"
+echo "<tool>Aktif baglanti: $OUT</tool>"

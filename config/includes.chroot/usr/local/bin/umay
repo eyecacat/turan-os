@@ -1,0 +1,12 @@
+#!/bin/bash
+# Umay - Dogurganlik ve Koruma Tanricasi, RAM Yonetimi
+K='\033[1;32m'; S='\033[0m'
+echo -e "${K}  UMAY${S}  Bellek Koruyucusu"
+echo "============================================"
+free -h
+echo
+echo "En cok bellek kullanan 10 surec:"
+ps aux --sort=-%mem | head -11 | awk '{printf "%-8s %6s %6s  %s\n",$1,$3,$4,$11}'
+echo
+echo "Onbellek durumu:"
+cat /proc/meminfo | grep -E "^(Cached|Buffers|Dirty|Writeback)"

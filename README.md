@@ -30,3 +30,11 @@ Her şey metin dosyasıdır; `main`'e push edilince ISO otomatik derlenir.
 
 ## Lisans
 Bu depodaki yapılandırma dosyaları için lisans dosyası (LICENSE) eklenmelidir. Dağıtıma dahil edilen yazılımlar kendi lisanslarına tabidir.
+
+## Bozkır Katmanı (v0.3)
+- Renk paleti: Gök Mavisi #00A6FF · Kut Altını #D4AF37 · Ötüken Yeşili #1B4D3E · Yurt Kömürü #11141A · Şaman Kemiği #F5F2EB
+- Göktürk runik destekli MOTD ve duvar kağıdı
+- Mitolojik komutlar: `asena` (ağ), `umay` (RAM), `tore` (güvenlik), `kam` (donanım)
+- `bilge` yapay zeka iskeleti: `bilge ozet`, `bilge morf`, `bilge runik`
+- `tamga` kişisel mühür üretici
+- Panel: Asena/Umay/Kam genmon widget'ları

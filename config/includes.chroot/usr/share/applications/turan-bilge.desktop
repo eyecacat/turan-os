@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Bilge AI
+Comment=Yerel Yapay Zeka Yardimcisi
+Exec=xfce4-terminal -e "bilge yardim" --title=Bilge
+Icon=turan-os
+Terminal=false
+Categories=Utility;System;
+Keywords=AI;Yapay;Zeka;Bilge;

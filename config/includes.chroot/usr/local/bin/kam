@@ -1,0 +1,17 @@
+#!/bin/bash
+# Kam - Saman, Tabiat Gozlemcisi, Donanim Anomali Tespiti
+K='\033[1;36m'; S='\033[0m'
+echo -e "${K}  KAM${S}  Donanim Sagligi"
+echo "============================================"
+if command -v sensors >/dev/null 2>&1; then
+  echo "Sicakliklar:"
+  sensors | grep -E "°C|Core|temp" | head -15
+else
+  echo "  (lm-sensors kurulu degil)"
+fi
+echo
+echo "SMART disk sagligi:"
+sudo smartctl -H /dev/sda 2>/dev/null | grep -E "result|health" || echo "  (smartmontools veya izin yok)"
+echo
+echo "Pil durumu:"
+upower -i $(upower -e 2>/dev/null | grep battery | head -1) 2>/dev/null | grep -E "state|percentage|time" || echo "  (pil yok veya upower yok)"

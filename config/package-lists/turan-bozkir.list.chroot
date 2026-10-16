@@ -1,0 +1,18 @@
+# Bozkır Katmanı v0.3
+conky-all
+xfce4-genmon-plugin
+fonts-noto-core
+fonts-noto-extra
+noto-fonts-color-emoji
+rsvg-convert
+cairo-5c
+python3-cairo
+python3-gi
+gir1.2-gtk-3.0
+zenity
+espeak-ng
+libnotify-bin
+ss
+iproute2
+upower
+acpi
