@@ -3,3 +3,5 @@ cache/
 binary/
 .build/
 *.iso
+*.part*
+live-image-*

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=TURAN-OS ilk oturum
+Exec=/usr/local/bin/turan-ilk-oturum
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,22 @@
+#!/bin/bash
+# Her oturum açılışında çalışır.
+
+# 1) Kurulu sistemde "Diske Kur" kısayolunu kaldır (canlı oturumda /run/live vardır)
+if [ ! -d /run/live ]; then
+  rm -f "$HOME/Desktop/turan-kur.desktop"
+fi
+
+# 2) İlk oturumda duvar kağıdını uygula
+ISARET="$HOME/.config/turan/ilk-oturum-tamam"
+if [ ! -f "$ISARET" ]; then
+  mkdir -p "$(dirname "$ISARET")"
+  sleep 4
+  DK=/usr/share/backgrounds/turan/turan-os.png
+  for p in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep 'last-image'); do
+    xfconf-query -c xfce4-desktop -p "$p" -s "$DK"
+  done
+  for p in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep 'image-style'); do
+    xfconf-query -c xfce4-desktop -p "$p" -s 5
+  done
+  touch "$ISARET"
+fi

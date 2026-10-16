@@ -1,0 +1,90 @@
+#!/bin/bash
+# turan - TURAN-OS komut satırı aracı
+SURUM="$(cat /etc/turan-surum 2>/dev/null || echo bilinmiyor)"
+K='\e[1;31m'; S='\e[0m'
+
+yardim() {
+  echo -e "${K}TURAN-OS${S} ${SURUM} - komut satırı aracı"
+  cat <<'EOT'
+
+Kullanım: turan <komut> [seçenekler]
+
+  bilgi            Sistem özeti
+  surum            Sürüm numarası
+  guncelle         Sistemi ve Flatpak uygulamalarını güncelle
+  kur <paket>      Paket kur
+  kaldir <paket>   Paket kaldır
+  ara <kelime>     Paket ara
+  temizle          Gereksiz paket ve önbellekleri temizle
+  ag               Ağ durumu ve Wi-Fi listesi
+  disk             Disk ve bölüm bilgisi
+  donanim          Donanım özeti
+  saglik           Sistem sağlık kontrolü
+  yedek            Sistem anlık görüntüsü al (Timeshift)
+  yardim           Bu yardım ekranı
+EOT
+}
+
+komut="${1:-yardim}"
+shift 2>/dev/null || true
+
+case "$komut" in
+  bilgi)
+    if command -v fastfetch >/dev/null 2>&1; then fastfetch; else uname -a; fi ;;
+  surum)
+    echo "TURAN-OS ${SURUM}" ;;
+  guncelle)
+    sudo apt-get update && sudo apt-get full-upgrade -y && sudo apt-get autoremove -y
+    if command -v flatpak >/dev/null 2>&1; then flatpak update -y; fi ;;
+  kur)
+    [ $# -gt 0 ] || { echo "Kullanım: turan kur <paket>"; exit 1; }
+    sudo apt-get install "$@" ;;
+  kaldir)
+    [ $# -gt 0 ] || { echo "Kullanım: turan kaldir <paket>"; exit 1; }
+    sudo apt-get remove "$@" ;;
+  ara)
+    [ $# -gt 0 ] || { echo "Kullanım: turan ara <kelime>"; exit 1; }
+    apt-cache search "$@" ;;
+  temizle)
+    sudo apt-get autoremove --purge -y
+    sudo apt-get clean
+    if command -v flatpak >/dev/null 2>&1; then flatpak uninstall --unused -y; fi
+    sudo journalctl --vacuum-time=7d ;;
+  ag)
+    ip -br address
+    echo
+    nmcli device status 2>/dev/null
+    echo
+    nmcli -f IN-USE,SSID,SIGNAL,SECURITY device wifi list 2>/dev/null ;;
+  disk)
+    lsblk -f
+    echo
+    df -h -x tmpfs -x devtmpfs ;;
+  donanim)
+    lscpu | grep -E 'Model name|^CPU\(s\)'
+    free -h | head -2
+    lspci 2>/dev/null | grep -E 'VGA|3D|Network|Audio'
+    echo
+    lsblk -d -o NAME,SIZE,MODEL,ROTA ;;
+  saglik)
+    echo "== Başarısız servisler =="
+    systemctl --failed --no-legend || true
+    echo
+    echo "== Son hatalar =="
+    journalctl -p 3 -b --no-pager -n 15
+    echo
+    echo "== Disk =="
+    df -h / 2>/dev/null
+    echo
+    echo "== Bellek =="
+    free -h ;;
+  yedek)
+    sudo timeshift --create --comments "turan yedek" --tags O ;;
+  yardim|-h|--help)
+    yardim ;;
+  *)
+    echo "Bilinmeyen komut: $komut"
+    echo
+    yardim
+    exit 1 ;;
+esac

@@ -3,7 +3,11 @@ name: TURAN-OS ISO derle
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -12,12 +16,18 @@ jobs:
       image: debian:trixie
       options: --privileged
     steps:
-      - uses: actions/checkout@v4
-
       - name: Araçları kur
         run: |
           apt-get update
-          apt-get install -y live-build debootstrap squashfs-tools xorriso git ca-certificates
+          apt-get install -y live-build debootstrap squashfs-tools xorriso git ca-certificates librsvg2-bin
+
+      - uses: actions/checkout@v4
+
+      - name: Betik sözdizimi denetimi
+        run: |
+          bash -n config/includes.chroot/usr/local/bin/turan
+          bash -n config/includes.chroot/usr/local/bin/turan-ilk-oturum
+          for f in auto/config config/hooks/live/*.hook.chroot; do sh -n "$f"; done
 
       - name: ISO derle
         run: |
@@ -25,8 +35,37 @@ jobs:
           lb config
           lb build
 
-      - name: ISO'yu yükle
+      - name: ISO'yu hazırla ve denetle
+        run: |
+          SURUM="$(cat config/includes.chroot/etc/turan-surum)"
+          mv live-image-*.iso "turan-os-${SURUM}-amd64.iso"
+          sha256sum "turan-os-${SURUM}-amd64.iso" > SHA256SUMS
+          ls -lh turan-os-*.iso
+          xorriso -indev "turan-os-${SURUM}-amd64.iso" -report_el_torito plain
+
+      - name: Artifact olarak yükle
         uses: actions/upload-artifact@v4
         with:
           name: turan-os-iso
-          path: "*.iso"
+          path: |
+            turan-os-*.iso
+            SHA256SUMS
+          compression-level: 0
+
+      - name: Sürüm için parçala (GitHub dosya sınırı 2 GiB)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          split -b 1900M -d -a 2 turan-os-*-amd64.iso "turan-os-${GITHUB_REF_NAME}-amd64.iso.part"
+
+      - name: GitHub Releases'e yükle
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            turan-os-*.iso.part*
+            SHA256SUMS
+          body: |
+            İndirdiğiniz parçaları birleştirin.
+            Linux/macOS: `cat turan-os-*.iso.part* > turan-os.iso`
+            Windows (cmd): `copy /b turan-os-*.iso.part00 + turan-os-*.iso.part01 + turan-os-*.iso.part02 turan-os.iso`
+            Doğrulama için SHA256SUMS dosyasına bakın.

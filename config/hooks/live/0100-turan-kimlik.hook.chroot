@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+SURUM="$(cat /etc/turan-surum)"
+
+cat > /etc/os-release <<EOT
+PRETTY_NAME="TURAN-OS ${SURUM}"
+NAME="TURAN-OS"
+VERSION_ID="${SURUM}"
+VERSION="${SURUM}"
+VERSION_CODENAME=trixie
+ID=turan-os
+ID_LIKE=debian
+HOME_URL="https://github.com/eyecacat/turan-os"
+SUPPORT_URL="https://github.com/eyecacat/turan-os/issues"
+BUG_REPORT_URL="https://github.com/eyecacat/turan-os/issues"
+EOT
+
+printf 'TURAN-OS %s \\n \\l\n\n' "$SURUM" > /etc/issue
+printf 'TURAN-OS %s\n' "$SURUM" > /etc/issue.net

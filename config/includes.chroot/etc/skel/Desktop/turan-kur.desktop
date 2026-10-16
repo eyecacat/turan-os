@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TURAN-OS'u Diske Kur
+Comment=TURAN-OS'u bilgisayarınıza kurun
+Exec=sudo -E calamares
+Icon=turan-os
+Terminal=false
+Categories=System;

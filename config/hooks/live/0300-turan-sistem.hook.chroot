@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+# Güvenlik duvarı
+sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf 2>/dev/null || true
+systemctl enable ufw 2>/dev/null || true
+
+# Otomatik güvenlik güncellemeleri
+cat > /etc/apt/apt.conf.d/20auto-upgrades <<EOT
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+EOT
+systemctl enable unattended-upgrades 2>/dev/null || true
+
+# Pil ömrü ve bellek sıkıştırma
+systemctl enable tlp 2>/dev/null || true
+systemctl enable zramswap 2>/dev/null || true
+
+# Flathub (yazılım merkezinde binlerce ek uygulama)
+flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+
+# İzinler
+chmod +x /usr/local/bin/turan /usr/local/bin/turan-ilk-oturum 2>/dev/null || true
+chmod +x /etc/skel/Desktop/*.desktop 2>/dev/null || true

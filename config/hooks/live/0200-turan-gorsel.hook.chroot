@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+# SVG -> PNG
+rsvg-convert -w 1920 -h 1080 /usr/share/backgrounds/turan/turan-os.svg -o /usr/share/backgrounds/turan/turan-os.png
+rsvg-convert -w 3840 -h 2160 /usr/share/backgrounds/turan/turan-os.svg -o /usr/share/backgrounds/turan/turan-os-4k.png
+rsvg-convert -w 256 -h 256 /usr/share/icons/hicolor/scalable/apps/turan-os.svg -o /usr/share/pixmaps/turan-os.png
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+
+# Açılış ekranı (Plymouth) - logoyu filigran olarak kullan
+if [ -d /usr/share/plymouth/themes/spinner ]; then
+  cp /usr/share/pixmaps/turan-os.png /usr/share/plymouth/themes/spinner/watermark.png || true
+  plymouth-set-default-theme -R spinner || true
+fi
+
+# GRUB menüsünde dağıtım adı
+if [ -f /etc/default/grub ]; then
+  if grep -q '^GRUB_DISTRIBUTOR=' /etc/default/grub; then
+    sed -i 's|^GRUB_DISTRIBUTOR=.*|GRUB_DISTRIBUTOR="TURAN-OS"|' /etc/default/grub
+  else
+    echo 'GRUB_DISTRIBUTOR="TURAN-OS"' >> /etc/default/grub
+  fi
+fi
+
+# Calamares kurulum ekranı metinleri (en iyi çaba)
+for d in /etc/calamares /usr/share/calamares; do
+  if [ -d "$d" ]; then
+    find "$d" -name 'branding.desc' -exec sed -i 's/Debian GNU\/Linux/TURAN-OS/g; s/Debian/TURAN-OS/g' {} + || true
+  fi
+done
