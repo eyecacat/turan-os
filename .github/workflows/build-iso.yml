@@ -1,0 +1,32 @@
+name: TURAN-OS ISO derle
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:trixie
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Araçları kur
+        run: |
+          apt-get update
+          apt-get install -y live-build debootstrap squashfs-tools xorriso git ca-certificates
+
+      - name: ISO derle
+        run: |
+          chmod +x auto/config
+          lb config
+          lb build
+
+      - name: ISO'yu yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: turan-os-iso
+          path: "*.iso"

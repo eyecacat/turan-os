@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+lb config noauto \
+  --distribution trixie \
+  --architectures amd64 \
+  --archive-areas "main contrib non-free-firmware" \
+  --binary-images iso-hybrid \
+  --iso-application "TURAN-OS" \
+  --iso-volume "TURAN-OS" \
+  --bootappend-live "boot=live components quiet splash" \
+  --debian-installer none \
+  "${@}"
