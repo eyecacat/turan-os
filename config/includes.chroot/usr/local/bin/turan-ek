@@ -1,0 +1,12 @@
+#!/bin/bash
+case "$1" in
+  wifi)      nmcli device wifi list ;;
+  bt)        bluetoothctl show 2>/dev/null; bluetoothctl devices 2>/dev/null ;;
+  sicaklik)  sensors 2>/dev/null | head -30 ;;
+  gpu)       lspci | grep -Ei 'vga|3d|display' ;;
+  kernel)    uname -r; echo; ls /boot/vmlinuz-* 2>/dev/null ;;
+  servis)    systemctl list-units --type=service --state=running --no-pager | head -30 ;;
+  gunluk)    journalctl -p 3 -b --no-pager -n 30 ;;
+  kurtarma)  echo "Yeniden baslatip GRUB'da 'Advanced options' secin." ;;
+  *)         echo "Bilinmeyen ek komut: $1"; exit 1 ;;
+esac

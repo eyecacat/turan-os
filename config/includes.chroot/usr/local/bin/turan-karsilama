@@ -1,0 +1,7 @@
+#!/bin/bash
+ISARET="$HOME/.config/turan/karsilama-tamam"
+[ -f "$ISARET" ] && exit 0
+mkdir -p "$(dirname "$ISARET")"
+zenity --info --title="TURAN-OS'a Hos Geldiniz" --width=520 \
+  --text="<b>TURAN-OS 1.0</b>\n\nTurkce oncelikli, Debian tabanli isletim sisteminiz hazir.\n\n- <b>turan yardim</b> ile komut aracini kesfedin\n- <b>turan guncelle</b> ile sistemi guncelleyin\n\nIyi calismalar!" 2>/dev/null || true
+touch "$ISARET"

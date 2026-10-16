@@ -16,3 +16,25 @@
 - Kendi APT deposu ve `.deb` paketleri
 - Hoş geldin uygulaması (ilk açılış sihirbazı)
 - Legacy BIOS kurulum desteği
+
+## v1.0.0-rc2 ile eklenenler
+- [x] sysctl sertlestirme + performans
+- [x] AppArmor, parola politikasi, sudoers sikilastirma
+- [x] XFCE panel duzeni ve klavye kisayollari
+- [x] GTK CSS ile TURAN kirmizisi vurgular
+- [x] GRUB sessiz acilis ayarlari
+- [x] journald kalici + boyut limiti
+- [x] Haftalik bakim timer
+- [x] Calamares markasi ve LUKS otomatik bolumleme
+- [x] Turkce locale/keyboard/timezone tam
+- [x] MOTD + fastfetch kimligi
+- [x] Ilk acilis karsilama sihirbazi
+- [x] Ek uygulamalar
+
+## Hala eksik (v1.0 final oncesi)
+- [ ] VirtualBox EFI testi
+- [ ] 2 farkli gercek makinede acilis testi
+- [ ] Wi-Fi/ses/Bluetooth saha testi
+- [ ] Ozel Plymouth animasyonu
+- [ ] Ozel GRUB gorsel temasi
+- [ ] LICENSE dosyasi

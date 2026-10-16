@@ -1,0 +1,12 @@
+[Unit]
+Description=TURAN-OS dosya sistemi ince ayari
+After=local-fs.target
+ConditionPathExists=/etc/turan-surum
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/turan-fs-tune
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

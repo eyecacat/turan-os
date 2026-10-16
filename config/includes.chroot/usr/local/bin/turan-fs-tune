@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+KOK=$(findmnt -no FSTYPE /)
+case "$KOK" in
+  ext4)
+    if ! grep -q noatime /etc/fstab 2>/dev/null; then
+      sed -i 's|\(\s/\s*ext4\s*\)\([^ ]*\)|\1\2,noatime|' /etc/fstab || true
+    fi
+    systemctl enable fstrim.timer 2>/dev/null || true ;;
+  btrfs)
+    systemctl enable btrfs-scrub@-.timer 2>/dev/null || true
+    systemctl enable btrfs-balance.timer 2>/dev/null || true ;;
+esac
+exit 0

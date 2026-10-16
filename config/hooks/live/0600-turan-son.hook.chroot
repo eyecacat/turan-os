@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+systemctl daemon-reload 2>/dev/null || true
+systemctl enable turan-bakim.timer 2>/dev/null || true
+systemctl enable fstrim.timer 2>/dev/null || true
+chmod +x /etc/skel/Desktop/*.desktop 2>/dev/null || true
+chmod +x /usr/local/bin/turan* 2>/dev/null || true
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+update-desktop-database 2>/dev/null || true
+exit 0

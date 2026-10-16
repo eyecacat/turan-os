@@ -1,0 +1,5 @@
+@define-color turan_red #e30a17;
+@define-color turan_dark #0a0f1c;
+headerbar, .titlebar { background: linear-gradient(180deg, #141f36, #0a0f1c); color: #fff; }
+button.suggested-action { background: @turan_red; color: #fff; }
+progressbar progress { background: @turan_red; }

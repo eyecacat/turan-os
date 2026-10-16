@@ -1,0 +1,10 @@
+[Unit]
+Description=Haftalik TURAN-OS bakimi
+Requires=turan-bakim.service
+
+[Timer]
+OnCalendar=Sun *-*-* 03:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

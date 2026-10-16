@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+sed -i 's/^# *tr_TR.UTF-8/tr_TR.UTF-8/' /etc/locale.gen
+sed -i 's/^# *en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+locale-gen
+cat > /etc/default/locale <<'EOT'
+LANG=tr_TR.UTF-8
+LANGUAGE=tr_TR:tr
+LC_MESSAGES=tr_TR.UTF-8
+LC_TIME=tr_TR.UTF-8
+LC_MONETARY=tr_TR.UTF-8
+LC_PAPER=tr_TR.UTF-8
+LC_NAME=tr_TR.UTF-8
+LC_ADDRESS=tr_TR.UTF-8
+LC_TELEPHONE=tr_TR.UTF-8
+LC_MEASUREMENT=tr_TR.UTF-8
+LC_IDENTIFICATION=tr_TR.UTF-8
+EOT
+ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+echo "Europe/Istanbul" > /etc/timezone
+cat > /etc/default/keyboard <<'EOT'
+XKBMODEL="pc105"
+XKBLAYOUT="tr"
+XKBVARIANT=""
+XKBOPTIONS=""
+BACKSPACE="guess"
+EOT
+mkdir -p /etc/update-motd.d
+cat > /etc/update-motd.d/00-turan <<'EOT'
+#!/bin/sh
+SURUM="$(cat /etc/turan-surum 2>/dev/null || echo '?')"
+printf '\n\033[1;31m  TURAN-OS\033[0m %s\n' "$SURUM"
+printf '  Turkce Linux - https://github.com/eyecacat/turan-os\n'
+printf '  Yardim: turan yardim\n\n'
+EOT
+chmod +x /etc/update-motd.d/00-turan
+exit 0

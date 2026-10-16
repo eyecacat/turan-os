@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=TURAN-OS Karsilama
+Exec=/usr/local/bin/turan-karsilama
+X-GNOME-Autostart-enabled=true
+OnlyShowIn=XFCE;

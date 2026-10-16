@@ -1,0 +1,17 @@
+---
+componentName: turan
+strings:
+    productName:         "TURAN-OS"
+    shortProductName:    "TURAN"
+    version:             "1.0"
+    shortVersion:        "1.0"
+    versionedName:       "TURAN-OS 1.0"
+    shortVersionedName:  "TURAN 1.0"
+    bootloaderEntryName: "TURAN-OS"
+    productUrl:          "https://github.com/eyecacat/turan-os"
+    supportUrl:          "https://github.com/eyecacat/turan-os/issues"
+style:
+   sidebarBackground:    "#0a0f1c"
+   sidebarText:          "#FFFFFF"
+   sidebarTextSelect:    "#e30a17"
+   sidebarTextHighlight: "#e30a17"

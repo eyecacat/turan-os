@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+systemctl enable apparmor 2>/dev/null || true
+mkdir -p /etc/security/pwquality.conf.d
+cat > /etc/security/pwquality.conf.d/turan.conf <<'EOT'
+minlen = 8
+minclass = 3
+maxrepeat = 3
+EOT
+cat > /etc/sudoers.d/90-turan <<'EOT'
+Defaults timestamp_timeout=10
+Defaults env_reset, secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+EOT
+chmod 440 /etc/sudoers.d/90-turan
+systemctl enable turan-fs-tune.service 2>/dev/null || true
+systemctl enable earlyoom 2>/dev/null || true
+systemctl enable irqbalance 2>/dev/null || true
+systemctl enable systemd-coredump 2>/dev/null || true
+exit 0

@@ -27,6 +27,10 @@ jobs:
         run: |
           bash -n config/includes.chroot/usr/local/bin/turan
           bash -n config/includes.chroot/usr/local/bin/turan-ilk-oturum
+          bash -n config/includes.chroot/usr/local/bin/turan-fs-tune
+          bash -n config/includes.chroot/usr/local/bin/turan-bakim
+          bash -n config/includes.chroot/usr/local/bin/turan-karsilama
+          bash -n config/includes.chroot/usr/local/bin/turan-ek
           for f in auto/config config/hooks/live/*.hook.chroot; do sh -n "$f"; done
 
       - name: ISO derle

@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+apt-get update -qq || true
+apt-get autoremove --purge -y || true
+apt-get clean
+flatpak uninstall --unused -y 2>/dev/null || true
+journalctl --vacuum-time=14d || true
+exit 0
