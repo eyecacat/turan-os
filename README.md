@@ -53,3 +53,6 @@ Bu depodaki yapılandırma dosyaları için lisans dosyası (LICENSE) eklenmelid
 ### API Anahtarı Hakkında
 `/etc/turan/bilge-ai.conf` dosyasında OpenRouter API anahtarı vardır (mod 600).
 Yeniden dağıtım öncesi anahtarı değiştirin.
+
+## Ekran Görüntüleri
+- [Bilge AI örnek oturumu](docs/ekran-goruntuleri/bilge-ornek.txt)

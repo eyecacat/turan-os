@@ -1,0 +1,18 @@
+═══════════════════════════════════════════════════════════
+  TURAN-OS BILGE AI - Ornek Oturum
+═══════════════════════════════════════════════════════════
+
+Model: nvidia/nemotron-3.5-super-vl:free
+
+sen> merhaba
+bilge> Merhaba! Ben Sen Bilge, TURAN-OS'un Türkçe yapay zeka
+       yardımcıyım. Size nasıl yardımcı olabilirim?
+
+sen> fatih ne demek
+bilge> Fatih kelimesi Arapça kökenlidir ve "fetheden," "zafer
+       kazanan" veya "açan" anlamına gelir.
+
+       Türkçe'de genellikle erkek ismi olarak kullanılır. En
+       ünlü örneği, İstanbul'u fetheden Fatih Sultan Mehmed'dir.
+
+═══════════════════════════════════════════════════════════
