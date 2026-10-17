@@ -40,8 +40,6 @@ jobs:
           for f in auto/config config/hooks/live/*.hook.chroot; do sh -n "$f"; done
 
       - name: ISO derle
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           chmod +x auto/config
           lb config

@@ -1,0 +1,49 @@
+#!/bin/bash
+K='\033[1;36m'; Y='\033[1;33m'; S='\033[0m'
+DIZIN="$HOME/.config/turan"
+HEDEF="$DIZIN/bilge.conf"
+mkdir -p "$DIZIN"
+chmod 700 "$DIZIN"
+
+if [ "$1" = "sil" ]; then
+  [ -f "$HEDEF" ] && sed -i '/^BILGE_API_KEY=/d' "$HEDEF"
+  echo "Anahtar silindi."
+  exit 0
+fi
+
+echo -e "${K}Bilge AI Ayar${S}"
+echo "======================="
+echo "Ücretsiz bir OpenRouter API anahtarı alın:"
+echo -e "  ${Y}https://openrouter.ai/keys${S}"
+echo "Anahtar yalnızca bu bilgisayarda, $HEDEF dosyasında saklanır."
+echo
+
+if [ -f "$HEDEF" ] && grep -q '^BILGE_API_KEY="..*"' "$HEDEF"; then
+  echo "Kayıtlı bir anahtar var. Değiştirmek için yenisini girin, vazgeçmek için boş bırakın."
+fi
+
+read -rsp "API anahtarı (yazarken görünmez): " ANAHTAR
+echo
+if [ -z "$ANAHTAR" ]; then
+  echo "Değişiklik yapılmadı."
+  exit 0
+fi
+
+case "$ANAHTAR" in
+  sk-or-*) ;;
+  *) echo "Uyarı: OpenRouter anahtarları normalde 'sk-or-' ile başlar." ;;
+esac
+
+KOD="$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 \
+  -H "Authorization: Bearer $ANAHTAR" https://openrouter.ai/api/v1/auth/key || true)"
+case "$KOD" in
+  200) echo "Anahtar doğrulandı." ;;
+  401|403) echo "Anahtar geçersiz görünüyor (HTTP $KOD). Kaydedilmedi."; exit 1 ;;
+  *) echo "Doğrulama yapılamadı (HTTP ${KOD:-yok}); yine de kaydediliyor." ;;
+esac
+
+touch "$HEDEF"
+chmod 600 "$HEDEF"
+sed -i '/^BILGE_API_KEY=/d' "$HEDEF"
+printf 'BILGE_API_KEY="%s"\n' "$ANAHTAR" >> "$HEDEF"
+echo -e "${K}Tamam.${S} Deneyin: bilge sor \"merhaba\""

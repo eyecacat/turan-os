@@ -123,7 +123,7 @@ PY
 
 yardim() {
   cat <<EOT
-${K}BILGE${S} - TURAN-OS Yerel AI Yardimcisi
+${K}BILGE - Cevrimici AI Yardimcisi
 
 Kullanim:
   bilge sor "<soru>"           Yapay zekaya soru sor
@@ -145,6 +145,7 @@ komut="${1:-yardim}"; shift 2>/dev/null || true
 case "$komut" in
   sor) sor "$@" ;;
   sohbet) exec /usr/local/bin/bilge-sohbet ;;
+  ayar) exec /usr/local/bin/bilge-ayar ;;
   ozet) ozet ;;
   morf) morfoloji "$@" ;;
   runik) runik "$@" ;;

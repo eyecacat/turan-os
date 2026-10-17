@@ -2,8 +2,6 @@
 set -e
 
 # API anahtarini koru
-chmod 600 /etc/turan/bilge-ai.conf 2>/dev/null || true
-chown root:root /etc/turan/bilge-ai.conf 2>/dev/null || true
 
 # Bilge masaustu kisayollari
 mkdir -p /etc/skel/Desktop
@@ -11,7 +9,7 @@ cat > /etc/skel/Desktop/bilge-sohbet.desktop <<'EOT'
 [Desktop Entry]
 Type=Application
 Name=Bilge AI Sohbet
-Comment=Yerel yapay zeka sohbeti
+Comment=Çevrimiçi yapay zeka sohbeti (OpenRouter)
 Exec=xfce4-terminal -e "bilge-sohbet" --title=Bilge --maximize
 Icon=turan-os
 Terminal=false
