@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+# calamares-settings-debian "Install Debian" kısayolu getiriyor; TURAN-OS olarak yeniden adlandır
+for f in $(find /usr/share/applications /etc/skel -name 'install-debian*.desktop' 2>/dev/null); do
+  sed -i -e '/^Name\[/d' -e '/^GenericName\[/d' -e '/^Comment\[/d' \
+         -e "s/^Name=.*/Name=TURAN-OS'u Diske Kur/" \
+         -e 's/^Icon=.*/Icon=turan-os/' "$f"
+  echo "[turan] yeniden adlandirildi: $f"
+done
+exit 0

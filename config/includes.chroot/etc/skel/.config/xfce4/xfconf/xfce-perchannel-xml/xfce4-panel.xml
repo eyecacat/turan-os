@@ -7,6 +7,7 @@
   <property name="panel-1" type="empty">
     <property name="position" type="string" value="p=6;x=0;y=0"/>
     <property name="length" type="uint" value="100"/>
+    <property name="length-adjust" type="bool" value="false"/>
     <property name="position-locked" type="bool" value="true"/>
     <property name="size" type="uint" value="34"/>
     <property name="background-style" type="uint" value="1"/>
@@ -24,9 +25,9 @@
       <value type="int" value="9"/><value type="int" value="10"/>
     </property>
   </property>
-  <property name="plugin-1" type="string" value="whisker-menu"/>
+  <property name="plugin-1" type="string" value="whiskermenu"/>
   <property name="plugin-2" type="string" value="launcher">
-    <property name="items" type="array"><value type="string" value="turan-bilge.desktop"/></property>
+    <property name="items" type="array"><value type="string" value="bilge.desktop"/></property>
   </property>
   <property name="plugin-3" type="string" value="tasklist">
     <property name="grouping" type="uint" value="1"/>
@@ -38,15 +39,18 @@
   </property>
   <property name="plugin-5" type="string" value="genmon">
     <property name="command" type="string" value="asena-panel"/>
-    <property name="update-ms" type="int" value="3000"/>
+    <property name="use-label" type="bool" value="false"/>
+    <property name="update-period" type="int" value="3000"/>
   </property>
   <property name="plugin-6" type="string" value="genmon">
     <property name="command" type="string" value="umay-panel"/>
-    <property name="update-ms" type="int" value="2000"/>
+    <property name="use-label" type="bool" value="false"/>
+    <property name="update-period" type="int" value="2000"/>
   </property>
   <property name="plugin-7" type="string" value="genmon">
     <property name="command" type="string" value="kam-panel"/>
-    <property name="update-ms" type="int" value="5000"/>
+    <property name="use-label" type="bool" value="false"/>
+    <property name="update-period" type="int" value="5000"/>
   </property>
   <property name="plugin-8" type="string" value="systray"/>
   <property name="plugin-9" type="string" value="clock">

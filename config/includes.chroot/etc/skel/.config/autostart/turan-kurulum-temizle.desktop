@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=TURAN-OS kurulum kisayolu temizligi
+Exec=sh -c '[ -d /run/live ] || rm -f "$HOME"/Desktop/install-debian*.desktop "$HOME"/Desktop/turan-kur*.desktop'
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

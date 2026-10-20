@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Bilge AI
+Comment=Yapay zeka sohbeti
+Exec=xfce4-terminal --title=Bilge -e bilge-sohbet
+Icon=turan-os
+Terminal=false
+Categories=Utility;
